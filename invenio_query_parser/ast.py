@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of Invenio-Query-Parser.
-# Copyright (C) 2014, 2016 CERN.
+#
+# Copyright (C) 2014, 2015, 2016 CERN.
 #
 # Invenio-Query-Parser is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -181,4 +182,8 @@ class RegexValue(Leaf):
 
 
 class EmptyQuery(Leaf):
+    pass
+
+
+class MalformedQuery(Leaf):
     pass
