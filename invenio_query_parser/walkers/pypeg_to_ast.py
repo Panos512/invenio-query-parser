@@ -72,6 +72,10 @@ class PypegConverter(object):
     def visit(self, node):
         return ast.Value(node.value)
 
+    @visitor(parser.WildcardQuery)
+    def visit(self, node):
+        return ast.WildcardQuery(node.value)
+
     @visitor(parser.RangeValue)
     def visit(self, node, child):
         return child

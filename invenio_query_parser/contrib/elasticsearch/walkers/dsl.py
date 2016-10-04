@@ -30,7 +30,8 @@ from elasticsearch_dsl import Q
 
 from invenio_query_parser.ast import AndOp, DoubleQuotedValue, EmptyQuery, \
     GreaterEqualOp, GreaterOp, Keyword, KeywordOp, LowerEqualOp, LowerOp, \
-    NotOp, OrOp, RangeOp, RegexValue, SingleQuotedValue, Value, ValueQuery
+    NotOp, OrOp, RangeOp, RegexValue, SingleQuotedValue, Value, ValueQuery, \
+    WildcardQuery
 from invenio_query_parser.visitor import make_visitor
 
 
@@ -79,6 +80,24 @@ class ElasticSearchDSL(object):
     @visitor(Keyword)
     def visit(self, node):
         return node.value
+
+    @visitor(WildcardQuery)
+    def visit(self, node):
+        def query(keyword):
+            fields = self.get_fields_for_keyword(keyword, mode='p')
+            if len(fields) > 1:
+                res = Q('bool', should=[
+                        Q('query_string',
+                          query=value,
+                          default_field=k,
+                          analyze_wildcard=True) for k in fields])
+            else:
+                res = Q('query_string',
+                        query=value,
+                        default_field=fields[0],
+                        analyze_wildcard=True)
+            return res
+        return query
 
     @visitor(Value)
     def visit(self, node):

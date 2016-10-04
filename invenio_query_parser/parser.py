@@ -154,12 +154,19 @@ class RangeOp(BinaryRule):
     )
 
 
+class WildcardQuery(LeafRule):
+    grammar = attr('value', [
+        re.compile(r".*\*.*(?:\s|$)")
+    ])
+
+
 class Value(UnaryRule):
     grammar = attr('op', [
         RangeOp,
         SingleQuotedString,
         DoubleQuotedString,
         SlashQuotedString,
+        WildcardQuery,
         SimpleValue,
     ])
 

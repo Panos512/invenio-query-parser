@@ -29,7 +29,8 @@ from pytest import generate_tests
 
 from invenio_query_parser.ast import AndOp, DoubleQuotedValue, EmptyQuery, \
     GreaterEqualOp, GreaterOp, Keyword, KeywordOp, LowerEqualOp, LowerOp, \
-    NotOp, OrOp, RangeOp, RegexValue, SingleQuotedValue, Value, ValueQuery
+    NotOp, OrOp, RangeOp, RegexValue, SingleQuotedValue, Value, ValueQuery, \
+    WildcardQuery
 from invenio_query_parser.contrib.spires.ast import SpiresOp
 from invenio_query_parser.utils import build_valid_keywords_grammar
 
@@ -129,19 +130,21 @@ class TestParser(object):
 
         # Star patterns
         ("bar*",
-         ValueQuery(Value('bar*'))),
+         ValueQuery(WildcardQuery('bar*'))),
+        ("bar#",
+         ValueQuery(Value('bar#'))),
         ("foo: hello*",
-         KeywordOp(Keyword('foo'), Value('hello*'))),
+         KeywordOp(Keyword('foo'), WildcardQuery('hello*'))),
         ("foo: 'hello*'",
          KeywordOp(Keyword('foo'), SingleQuotedValue('hello*'))),
         ("foo: \"hello*\"",
          KeywordOp(Keyword('foo'), DoubleQuotedValue('hello*'))),
         ("foo: he*o",
-         KeywordOp(Keyword('foo'), Value('he*o'))),
+         KeywordOp(Keyword('foo'), WildcardQuery('he*o'))),
         ("foo: he*lo*",
-         KeywordOp(Keyword('foo'), Value('he*lo*'))),
+         KeywordOp(Keyword('foo'), WildcardQuery('he*lo*'))),
         ("foo: *hello",
-         KeywordOp(Keyword('foo'), Value('*hello'))),
+         KeywordOp(Keyword('foo'), WildcardQuery('*hello'))),
 
         # Special characters in keyword:value
         ("foo: O'Shea",
